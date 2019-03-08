@@ -10,5 +10,5 @@ Import-Module .\Build\Export-NUnitXml.psm1 -Force
 
 Set-BuildEnvironment
 
-Invoke-psake -buildFile .\psake.ps1 -taskList $Task -nologo
+Invoke-psake -buildFile .\Build\psake.ps1 -taskList $Task -nologo
 exit ( [int]( -not $psake.build_success ) )
