@@ -4,7 +4,7 @@ $moduleName = Split-Path $moduleRoot -Leaf
 
 Describe "General project validation: $moduleName" {
 
-    $scripts = Get-ChildItem $projectRoot -Include *.ps1,*.psm1,*.psd1 -Recurse
+    $scripts = Get-ChildItem $moduleRoot -Include *.ps1,*.psm1,*.psd1 -Recurse
 
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | Foreach-Object{@{file=$_}}         
@@ -22,4 +22,58 @@ Describe "General project validation: $moduleName" {
     It "Module '$moduleName' can import cleanly" {
         {Import-Module (Join-Path $moduleRoot "$moduleName.psm1") -force } | Should Not Throw
     }
+
+    foreach ($analyzeFile in $scripts)
+    {
+        $invokeScriptAnalyzerParameters = @{
+            Path        = $analyzeFile
+            ErrorAction = 'SilentlyContinue'
+            Recurse     = $false
+        }
+
+        Context $invokeScriptAnalyzerParameters.Path {
+            It 'Should pass all error-level PS Script Analyzer rules' {
+                $errorPssaRulesOutput = Invoke-ScriptAnalyzer @invokeScriptAnalyzerParameters -Severity 'Error'
+
+                if ($null -ne $errorPssaRulesOutput)
+                {
+                    Write-Warning -Message 'Error-level PSSA rule(s) did not pass.'
+                    Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
+
+                    foreach ($errorPssaRuleOutput in $errorPssaRulesOutput)
+                    {
+                        Write-Warning -Message "$($errorPssaRuleOutput.ScriptName) (Line $($errorPssaRuleOutput.Line)): $($errorPssaRuleOutput.Message)"
+                    }
+
+                    Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
+                }
+
+                $errorPssaRulesOutput | Should Be $null
+            }
+
+            It 'Should pass all warning-level PS Script Analyzer rules' {
+                $requiredPssaRulesOutput = Invoke-ScriptAnalyzer @invokeScriptAnalyzerParameters -Severity 'Warning'
+
+                if ($null -ne $requiredPssaRulesOutput)
+                {
+                    Write-Warning -Message 'Required PSSA rule(s) did not pass.'
+                    Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
+
+                    foreach ($requiredPssaRuleOutput in $requiredPssaRulesOutput)
+                    {
+                        Write-Warning -Message "$($requiredPssaRuleOutput.ScriptName) (Line $($requiredPssaRuleOutput.Line)): $($requiredPssaRuleOutput.Message)"
+                    }
+
+                    Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
+                }
+
+                <#
+                    Automatically passing this test until they are passing.
+                #>
+                #$requiredPssaRulesOutput = $null
+                $requiredPssaRulesOutput | Should Be $null
+            }
+        }
+    }
+
 }
