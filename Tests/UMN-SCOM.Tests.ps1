@@ -37,17 +37,21 @@ Describe "General project validation: $moduleName" {
 
                 if ($null -ne $errorPssaRulesOutput)
                 {
-                    Write-Warning -Message 'Error-level PSSA rule(s) did not pass.'
-                    Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
+                    $ScriptAnalyzerResultString = $ScriptAnalyzerResult | Out-String
+                    Write-Warning $ScriptAnalyzerResultString
+                    
+                    #Write-Warning -Message 'Error-level PSSA rule(s) did not pass.'
+                    #Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
 
-                    foreach ($errorPssaRuleOutput in $errorPssaRulesOutput)
-                    {
-                        Write-Warning -Message "$($errorPssaRuleOutput.ScriptName) (Line $($errorPssaRuleOutput.Line)): $($errorPssaRuleOutput.Message)"
-                    }
+                    #foreach ($errorPssaRuleOutput in $errorPssaRulesOutput)
+                    #{
+                    #    Write-Warning -Message "$($errorPssaRuleOutput.ScriptName) (Line $($errorPssaRuleOutput.Line)): $($errorPssaRuleOutput.Message)"
+                    #}
 
-                    Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
+                    #Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
                 }
-
+                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path '.\ScriptAnalyzerResultError.xml'
+                (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", '.\ScriptAnalyzerResultError.xml')
                 $errorPssaRulesOutput | Should Be $null
             }
 
@@ -56,21 +60,25 @@ Describe "General project validation: $moduleName" {
 
                 if ($null -ne $requiredPssaRulesOutput)
                 {
-                    Write-Warning -Message 'Required PSSA rule(s) did not pass.'
-                    Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
+                    $ScriptAnalyzerResultString = $ScriptAnalyzerResult | Out-String
+                    Write-Warning $ScriptAnalyzerResultString
+                    #Write-Warning -Message 'Required PSSA rule(s) did not pass.'
+                    #Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
 
-                    foreach ($requiredPssaRuleOutput in $requiredPssaRulesOutput)
-                    {
-                        Write-Warning -Message "$($requiredPssaRuleOutput.ScriptName) (Line $($requiredPssaRuleOutput.Line)): $($requiredPssaRuleOutput.Message)"
-                    }
+                    #foreach ($requiredPssaRuleOutput in $requiredPssaRulesOutput)
+                    #{
+                    #    Write-Warning -Message "$($requiredPssaRuleOutput.ScriptName) (Line $($requiredPssaRuleOutput.Line)): $($requiredPssaRuleOutput.Message)"
+                    #}
 
-                    Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
+                    #Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
                 }
 
                 <#
                     Automatically passing this test until they are passing.
                 #>
                 #$requiredPssaRulesOutput = $null
+                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path '.\ScriptAnalyzerResultWarning.xml'
+                (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", '.\ScriptAnalyzerResultWarning.xml')
                 $requiredPssaRulesOutput | Should Be $null
             }
         }
