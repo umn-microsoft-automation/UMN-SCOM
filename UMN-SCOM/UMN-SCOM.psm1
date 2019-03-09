@@ -18,10 +18,11 @@
 #region Dependancies
 Function Restart-SCOMHealth
 {
+    
+    [cmdletbinding(SupportsShouldProcess = $true)]
     param(
     [Parameter(madatory=$true)]$HostName
     )
-    [CmdletBinding(SupportsShouldProcess=$true)]
     try
     {
         Get-Service -Name "HealthService" -ComputerName $HostName | Stop-Service
