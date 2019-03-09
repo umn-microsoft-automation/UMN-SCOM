@@ -24,19 +24,14 @@ Function Restart-SCOMHealth
     [cmdletbinding]
     try
     {
-        $uselessVariable = "I'm pointless!"
         Get-Service -Name "HealthService" -ComputerName $HostName | Stop-Service
-        sleep -Seconds 5
+        Start-Sleep -Seconds 5
         if((Get-Service -Name "HealthService" -ComputerName $HostName).Status -ne "Running")
         {
             Invoke-Command -ComputerName $HostName -ScriptBlock {Remove-Item -Path "C:\Program Files\Microsoft Monitoring Agent\Agent\Health Service State\Health Service Store\" -Recurse -Force} 
-            sleep -Seconds 5
+            Start-Sleep -Seconds 5
         }
         Get-Service -Name "HealthService" -ComputerName $HostName | Start-Service
-        try {
-            write-verbose "do nothing"
-        }
-        catch {}
     }
     catch
     {
