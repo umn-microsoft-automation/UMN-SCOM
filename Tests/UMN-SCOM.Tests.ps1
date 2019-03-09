@@ -1,6 +1,10 @@
 $projectRoot = Resolve-Path "$PSScriptRoot\.."
 $moduleRoot = Split-Path (Resolve-Path "$projectRoot\*\*.psm1" | Where-Object Path -NotLike "$PSScriptRoot*")
 $moduleName = Split-Path $moduleRoot -Leaf
+"ProjectRoot: $ProjectRoot"
+"PSScriptRoot: $PSScriptRoot"
+"moduleRoot: $moduleRoot"
+"moduleName: $moduleName"
 
 Describe "General project validation: $moduleName" {
 
