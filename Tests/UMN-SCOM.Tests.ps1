@@ -41,7 +41,7 @@ Describe "General project validation: $moduleName" {
 
                 if ($null -ne $errorPssaRulesOutput)
                 {
-                    $ScriptAnalyzerResultString = $ScriptAnalyzerResult | Out-String
+                    $ScriptAnalyzerResultString = $errorPssaRulesOutput | Out-String
                     Write-Warning $ScriptAnalyzerResultString
                     
                     #Write-Warning -Message 'Error-level PSSA rule(s) did not pass.'
@@ -54,10 +54,11 @@ Describe "General project validation: $moduleName" {
 
                     #Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
                 }
-                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path "$ProjectRoot\Build\ScriptAnalyzerResultError.xml"
+                Export-NUnitXml -ScriptAnalyzerResult $errorPssaRulesOutput -Path "$ProjectRoot\Build\ScriptAnalyzerResultError.xml"
                 If($ENV:BHBuildSystem -eq 'AppVeyor') {
-                    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-                    "$ProjectRoot\Build\ScriptAnalyzerResultError.xml")
+                    (New-Object 'System.Net.WebClient').UploadFile(
+                        "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+                        "$ProjectRoot\Build\ScriptAnalyzerResultError.xml")
                 }
                 $errorPssaRulesOutput | Should Be $null
             }
@@ -67,7 +68,7 @@ Describe "General project validation: $moduleName" {
 
                 if ($null -ne $requiredPssaRulesOutput)
                 {
-                    $ScriptAnalyzerResultString = $ScriptAnalyzerResult | Out-String
+                    $ScriptAnalyzerResultString = $requiredPssaRulesOutput | Out-String
                     Write-Warning $ScriptAnalyzerResultString
                     #Write-Warning -Message 'Required PSSA rule(s) did not pass.'
                     #Write-Warning -Message 'The following PSScriptAnalyzer errors need to be fixed:'
@@ -84,10 +85,11 @@ Describe "General project validation: $moduleName" {
                     Automatically passing this test until they are passing.
                 #>
                 #$requiredPssaRulesOutput = $null
-                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path "$ProjectRoot\Build\ScriptAnalyzerResultWarning.xml"
+                Export-NUnitXml -ScriptAnalyzerResult $requiredPssaRulesOutput -Path "$ProjectRoot\Build\ScriptAnalyzerResultWarning.xml"
                 If($ENV:BHBuildSystem -eq 'AppVeyor') {
-                    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-                    "$ProjectRoot\Build\ScriptAnalyzerResultWarning.xml")
+                    (New-Object 'System.Net.WebClient').UploadFile(
+                        "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+                        "$ProjectRoot\Build\ScriptAnalyzerResultWarning.xml")
                 }
                 $requiredPssaRulesOutput | Should Be $null
             }

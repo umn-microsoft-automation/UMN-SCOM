@@ -49,7 +49,7 @@ Task Test -Depends Init  {
     {
         (New-Object 'System.Net.WebClient').UploadFile(
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-            "$ProjectRoot\$TestFile" )
+            "$ProjectRoot\Build\$TestFile" )
     }
 
     Remove-Item "$ProjectRoot\$TestFile" -Force -ErrorAction SilentlyContinue
