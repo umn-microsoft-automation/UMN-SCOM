@@ -21,7 +21,7 @@ Function Restart-SCOMHealth
     param(
     [Parameter(madatory=$true)]$HostName
     )
-    [cmdletbinding]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     try
     {
         Get-Service -Name "HealthService" -ComputerName $HostName | Stop-Service
