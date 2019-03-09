@@ -54,8 +54,11 @@ Describe "General project validation: $moduleName" {
 
                     #Write-Warning -Message  'For instructions on how to run PSScriptAnalyzer on your own machine, please go to https://github.com/powershell/PSScriptAnalyzer'
                 }
-                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path '.\ScriptAnalyzerResultError.xml'
-                (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", '.\ScriptAnalyzerResultError.xml')
+                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path "$ProjectRoot\Build\ScriptAnalyzerResultError.xml"
+                If($ENV:BHBuildSystem -eq 'AppVeyor') {
+                    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+                    "$ProjectRoot\Build\ScriptAnalyzerResultError.xml")
+                }
                 $errorPssaRulesOutput | Should Be $null
             }
 
@@ -81,8 +84,11 @@ Describe "General project validation: $moduleName" {
                     Automatically passing this test until they are passing.
                 #>
                 #$requiredPssaRulesOutput = $null
-                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path '.\ScriptAnalyzerResultWarning.xml'
-                (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", '.\ScriptAnalyzerResultWarning.xml')
+                Export-NUnitXml -ScriptAnalyzerResult $ScriptAnalyzerResult -Path "$ProjectRoot\Build\ScriptAnalyzerResultWarning.xml"
+                If($ENV:BHBuildSystem -eq 'AppVeyor') {
+                    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
+                    "$ProjectRoot\Build\ScriptAnalyzerResultWarning.xml")
+                }
                 $requiredPssaRulesOutput | Should Be $null
             }
         }
