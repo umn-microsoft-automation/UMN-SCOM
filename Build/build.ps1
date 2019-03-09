@@ -3,8 +3,8 @@ param ($Task = 'Default')
 # Grab nuget bits, install modules, set build variables, start build.
 Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 
-Install-Module Psake, PSDeploy, BuildHelpers, PSScriptAnalyzer -force -Scope CurrentUser
-Install-Module Pester -Force -SkipPublisherCheck -Scope CurrentUser
+Install-Module Psake, PSDeploy, BuildHelpers, PSScriptAnalyzer -force
+Install-Module Pester -Force -SkipPublisherCheck
 Import-Module Psake, BuildHelpers
 Import-Module .\Build\Export-NUnitXml.psm1 -Force
 
