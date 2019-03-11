@@ -29,4 +29,4 @@ steps:
     testRunner: 'NUnit'
     testResultsFiles: 'Build\ScriptAnalyzerResultWarning.xml'
     testRunTitle: 'PSScriptAnalyzer Warnings'
-  displayname: 'PSScriptAnalyzer Warnings'
+  displayName: 'PSScriptAnalyzer Warnings'
