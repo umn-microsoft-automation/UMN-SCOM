@@ -15,15 +15,18 @@ steps:
     testRunner: 'NUnit'
     testResultsFiles: 'Build/TestResults_PS*.xml'
     testRunTitle: 'Build Tests'
+  displayName: 'Build Tests'
 
 - task: PublishTestResults@2
   inputs:
     testRunner: 'NUnit'
     testResultsFiles: 'Build\ScriptAnalyzerResultError.xml'
     testRunTitle: 'PSScriptAnalyzer Errors'
+  displayName: 'PSScriptAnalyzer Errors'
 
 - task: PublishTestResults@2
   inputs:
     testRunner: 'NUnit'
     testResultsFiles: 'Build\ScriptAnalyzerResultWarning.xml'
     testRunTitle: 'PSScriptAnalyzer Warnings'
+  displayname: 'PSScriptAnalyzer Warnings'
