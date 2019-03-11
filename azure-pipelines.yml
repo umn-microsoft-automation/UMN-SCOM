@@ -9,3 +9,21 @@ pool:
 steps:
 - powershell: .\Build\build.ps1
   displayName: 'run build'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: 'NUnit'
+    testResultsFiles: 'Build/TestResults_PS*.xml'
+    testRunTitle: 'Build Tests'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: 'NUnit'
+    testResultsFiles: 'Build\ScriptAnalyzerResultError.xml'
+    testRunTitle: 'PSScriptAnalyzer Errors'
+
+- task: PublishTestResults@2
+  inputs:
+    testRunner: 'NUnit'
+    testResultsFiles: 'Build\ScriptAnalyzerResultWarning.xml'
+    testRunTitle: 'PSScriptAnalyzer Warnings'
